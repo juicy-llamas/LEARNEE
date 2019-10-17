@@ -1,20 +1,21 @@
-OBJ = build/Math_Functions.o build/Machine_Learning.o
+
+OBJ = build/Matrix.o build/Quick_Maths.o
 BINARY = liblearnee.so
 
 default: install
 
-build/Machine_Learning.o:
-	$(CXX) -Wall -fPIC -o build/Machine_Learning.o -c src/Machine_Learning.cpp
+build/Matrix.o:
+	$(CXX) -Wall -fPIC -o build/Matrix.o -c src/Matrix_Not_Vectorized.cpp
 
-build/Math_Functions.o:
-	$(CXX) -Wall -fPIC -o build/Math_Functions.o -c src/Math_Functions.cpp
+build/Quick_Maths.o:
+	$(CXX) -Wall -fPIC -o build/Quick_Maths.o -c src/Quick_Maths.cpp
 
 link: $(OBJ)
 	$(CXX) -shared -o bin/$(BINARY) $(OBJ)
 
 install: link
 	cp bin/$(BINARY) /usr/lib/$(BINARY)
-	cp src/Machine_Learning.hpp /usr/include/Machine_Learning.hpp
+	#cp src/include/* /usr/include/
 	ldconfig
 
 clean:
