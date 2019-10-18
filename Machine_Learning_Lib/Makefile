@@ -15,7 +15,8 @@ link: $(OBJ)
 
 install: link
 	cp bin/$(BINARY) /usr/lib/$(BINARY)
-	#cp src/include/* /usr/include/
+	mkdir /usr/include/learnee
+	cp src/include/* /usr/include/learnee
 	ldconfig
 
 clean:
@@ -24,5 +25,6 @@ clean:
 
 uninstall:
 	$(RM) /usr/lib/$(BINARY)
+	$(RM) -r /usr/include/learnee
 	ldconfig
 
