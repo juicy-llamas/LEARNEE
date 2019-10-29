@@ -5,347 +5,349 @@
 // I will then make a vectorized lib that uses threading later. 
 // After that, I will implement these using the CUDA library ( GPU acceleration ) for SUPREME THREADING.
 
-#include "include/Machine_Learning.hpp"
+#include "include/matrix.hpp"
 
-using namespace Learnee;
+namespace Learnee { 
 
-// constructor ( int int long float* )
-Matrix::Matrix ( int _rows, int _columns, long _size, float* _data ) {
+	// constructor ( int int long float* )
+	Matrix::Matrix ( int _rows, int _columns, long _size, float* _data ) {
 
-	if ( mcheck() ) { throw 1; return; }
+		if ( mcheck() ) { throw 1; return; }
 
-	rows = _rows;
-	columns = _columns;
-	size = _size;
-	data = _data;
+		rows = _rows;
+		columns = _columns;
+		size = _size;
+		data = _data;
 
-}
+	}
 
-// constructor ( int int long )
-Matrix::Matrix ( int _rows, int _columns, long _size ) {
+	// constructor ( int int long )
+	Matrix::Matrix ( int _rows, int _columns, long _size ) {
 
-	if ( mcheck() ) { throw 1; return; }
+		if ( mcheck() ) { throw 1; return; }
 
-	rows = _rows;
-	columns = _columns;
-	size = _size;
-	data = ( float * ) calloc( size, sizeof( float ) );
+		rows = _rows;
+		columns = _columns;
+		size = _size;
+		data = ( float * ) calloc( size, sizeof( float ) );
 
-}
+	}
 
-// constructor ( matrix )
-Matrix::Matrix ( Matrix* source ) {
-	
-	if ( !source->mcheck() ) { throw 1; return; }
+	// constructor ( matrix )
+	Matrix::Matrix ( Matrix* source ) {
+		
+		if ( !source->mcheck() ) { throw 1; return; }
 
-	rows = source->rows;
-	columns = source->columns;
-	size = source->size;
+		rows = source->rows;
+		columns = source->columns;
+		size = source->size;
 
-	data = ( float * ) malloc( sizeof( float ) * size );
-	float* d = source->data;
+		data = ( float * ) malloc( sizeof( float ) * size );
+		float* d = source->data;
 
-	std::copy( d, d + size, data );
+		std::copy( d, d + size, data );
 
-}
+	}
 
-// mcheck
-int Matrix::mcheck () {
+	// mcheck
+	int Matrix::mcheck () {
 
-	return ( rows * columns != size );
+		return ( rows * columns != size );
 
-}
+	}
 
-// mchad
-int Matrix::mchad ( Matrix* mat ) {
+	// mchad
+	int Matrix::mchad ( Matrix* mat ) {
 
-	return ( rows != mat->rows || columns != mat->columns || rows * columns != size );
+		return ( rows != mat->rows || columns != mat->columns || rows * columns != size );
 
-}
+	}
 
-// mchmul
-int Matrix::mchmul ( Matrix* mat ) {
+	// mchmul
+	int Matrix::mchmul ( Matrix* mat ) {
 
-	return ( columns != mat->rows || rows * columns != size || mat->rows * mat->columns != mat->size );
+		return ( columns != mat->rows || rows * columns != size || mat->rows * mat->columns != mat->size );
 
-}
+	}
 
-// link ( Matrix* )
- Matrix* Matrix::link ( Matrix* mat ) {
+	// link ( Matrix* )
+	 Matrix* Matrix::link ( Matrix* mat ) {
 
-	trash();
-	
-	rows = mat->rows;
-	columns = mat->columns;
-	size = mat->size;
-	data = mat->data;
+		trash();
+		
+		rows = mat->rows;
+		columns = mat->columns;
+		size = mat->size;
+		data = mat->data;
 
-	return this;	
+		return this;	
 
-}
+	}
 
-// copy ( Matrix* )
- Matrix* Matrix::copy ( Matrix* mat ) {
+	// copy ( Matrix* )
+	 Matrix* Matrix::copy ( Matrix* mat ) {
 
-	trash();
-	
-	rows = mat->rows;
-	columns = mat->columns;
-	size = mat->size;
+		trash();
+		
+		rows = mat->rows;
+		columns = mat->columns;
+		size = mat->size;
 
-	data = ( float * ) malloc( sizeof( float ) * size );
-	float* d = mat->data;
+		data = ( float * ) malloc( sizeof( float ) * size );
+		float* d = mat->data;
 
-	std::copy( d, d + size, data );
+		std::copy( d, d + size, data );
 
-	return this;
+		return this;
 
-}
+	}
 
-// trash
-void Matrix::trash () {
+	// trash
+	void Matrix::trash () {
 
-	free( data );
+		free( data );
 
-}
+	}
 
-// print
-void Matrix::print () {
+	// print
+	void Matrix::print () {
 
-	for ( int i = 0; i < rows; i++ ) {
+		for ( int i = 0; i < rows; i++ ) {
+
+			std::cout << "[ ";
+
+			for ( int j = 0; j < columns; j++ ) 
+				std::cout << data[ i*columns + j ] << " ";
+
+			std::cout << "]\n";	
+
+		}
+
+	}
+
+	// printraw
+	void Matrix::printraw () {
 
 		std::cout << "[ ";
 
-		for ( int j = 0; j < columns; j++ ) 
-			std::cout << data[ i*columns + j ] << " ";
+		for ( long i = 0L; i < size - 1; i++ ) 
+			std::cout << data[ i ] << ", ";
 
-		std::cout << "]\n";	
+		std::cout << data[ size - 1 ] << " ]\n";	
 
 	}
 
-}
+	// destructor
+	 Matrix::~Matrix () {
 
-// printraw
-void Matrix::printraw () {
+		trash();
 
-	std::cout << "[ ";
+	}
 
-	for ( long i = 0L; i < size - 1; i++ ) 
-		std::cout << data[ i ] << ", ";
+	// get_ptr
+	float* Matrix::get_ptr () {
 
-	std::cout << data[ size - 1 ] << " ]\n";	
+		return data;
 
-}
+	}
 
-// destructor
- Matrix::~Matrix () {
+	// get_rows
+	int Matrix::get_rows () {
 
-	trash();
+		return rows;
 
-}
+	}
 
-// get_ptr
-float* Matrix::get_ptr () {
 
-	return data;
+	// get_cols
+	int Matrix::get_cols () {
 
-}
+		return columns;
 
-// get_rows
-int Matrix::get_rows () {
+	}
 
-	return rows;
+	// get_size
+	long Matrix::get_size () {
 
-}
+		return size;
 
+	}
 
-// get_cols
-int Matrix::get_cols () {
+	// add ( Matrix* )
+	Matrix* Matrix::add ( Matrix* mat ) {
 
-	return columns;
+		if ( mchad( mat ) ) { throw 2; return this; }
 
-}
+		for ( long i = 0L; i < size; i++ ) 
+			data[ i ] += mat->data[ i ];
 
-// get_size
-long Matrix::get_size () {
+		return this;
 
-	return size;
+	}
 
-}
+	// addc ( float )
+	Matrix* Matrix::addc ( float cons ) {
 
-// add ( Matrix* )
-Matrix* Matrix::add ( Matrix* mat ) {
+		for ( long i = 0L; i < size; i++ ) 
+			data[ i ] += cons;
 
-	if ( mchad( mat ) ) { throw 2; return this; }
+		return this;
 
-	for ( long i = 0L; i < size; i++ ) 
-		data[ i ] += mat->data[ i ];
+	}
 
-	return this;
+	// sub ( Matrix* )
+	Matrix* Matrix::sub ( Matrix* mat ) {
 
-}
+		if ( mchad( mat ) ) { throw 2; return this; }
 
-// addc ( float )
-Matrix* Matrix::addc ( float cons ) {
+		for ( long i = 0L; i < size; i++ ) 
+			data[ i ] -= mat->data[ i ];
 
-	for ( long i = 0L; i < size; i++ ) 
-		data[ i ] += cons;
+		return this;
 
-	return this;
+	}
 
-}
+	// subc ( float )
+	Matrix* Matrix::subc ( float cons ) {
 
-// sub ( Matrix* )
-Matrix* Matrix::sub ( Matrix* mat ) {
+		for ( long i = 0L; i < size; i++ ) 
+			data[ i ] -= cons;
 
-	if ( mchad( mat ) ) { throw 2; return this; }
+		return this;
 
-	for ( long i = 0L; i < size; i++ ) 
-		data[ i ] -= mat->data[ i ];
+	}
 
-	return this;
+	// multelm ( Matrix* )
+	Matrix* Matrix::multelm ( Matrix* mat ) {
 
-}
+		if ( mchad( mat ) ) { throw 2; return this; }
 
-// subc ( float )
-Matrix* Matrix::subc ( float cons ) {
+		for ( long i = 0L; i < size; i++ ) 
+			data[ i ] *= mat->data[ i ];
 
-	for ( long i = 0L; i < size; i++ ) 
-		data[ i ] -= cons;
+		return this;
 
-	return this;
+	}
 
-}
+	// multc ( float )
+	Matrix* Matrix::multc ( float cons ) {
 
-// multelm ( Matrix* )
-Matrix* Matrix::multelm ( Matrix* mat ) {
+		for ( long i = 0L; i < size; i++ ) 
+			data[ i ] *= cons;
 
-	if ( mchad( mat ) ) { throw 2; return this; }
+		return this;
 
-	for ( long i = 0L; i < size; i++ ) 
-		data[ i ] *= mat->data[ i ];
+	}
 
-	return this;
+	// divelm ( Matrix* )
+	Matrix* Matrix::divelm ( Matrix* mat ) {
 
-}
+		if ( mchad( mat ) ) { throw 2; return this; }
 
-// multc ( float )
-Matrix* Matrix::multc ( float cons ) {
+		for ( long i = 0L; i < size; i++ ) 
+			data[ i ] /= mat->data[ i ];
 
-	for ( long i = 0L; i < size; i++ ) 
-		data[ i ] *= cons;
+		return this;
 
-	return this;
+	}
 
-}
+	// divc ( float )
+	Matrix* Matrix::divc ( float cons ) {
 
-// divelm ( Matrix* )
-Matrix* Matrix::divelm ( Matrix* mat ) {
+		for ( long i = 0L; i < size; i++ ) 
+			data[ i ] /= cons;
 
-	if ( mchad( mat ) ) { throw 2; return this; }
+		return this;
 
-	for ( long i = 0L; i < size; i++ ) 
-		data[ i ] /= mat->data[ i ];
+	}
 
-	return this;
+	// square
+	Matrix* Matrix::square () {
 
-}
+		for ( long i = 0L; i < size; i++ )
+			data[ i ] *= data[ i ];
 
-// divc ( float )
-Matrix* Matrix::divc ( float cons ) {
+		return this;
 
-	for ( long i = 0L; i < size; i++ ) 
-		data[ i ] /= cons;
+	}
 
-	return this;
+	// mag
+	float Matrix::mag () {
 
-}
+		if ( !( rows == 1 || columns == 1 ) ) { throw 3; return 0; }
 
-// square
-Matrix* Matrix::square () {
+		float mag = 0;
 
-	for ( long i = 0L; i < size; i++ )
-		data[ i ] *= data[ i ];
+		for ( long i = 0L; i < size; i++ ) 
+			mag += data[ i ] * data[ i ];
 
-	return this;
+		return sqrt( mag );
 
-}
+	}
 
-// mag
-float Matrix::mag () {
+	// avg
+	float Matrix::avg () {
 
-	if ( !( rows == 1 || columns == 1 ) ) { throw 3; return 0; }
+		float avg = 0;
 
-	float mag = 0;
+		for ( long i = 0L; i < size; i++ ) 
+			avg += data[ i ];
 
-	for ( long i = 0L; i < size; i++ ) 
-		mag += data[ i ] * data[ i ];
+		return avg / ( float )size;
 
-	return sqrt( mag );
+	}
 
-}
+	// mult ( Matrix* )
+		// TODO: IMPLEMENT A MORE EFFICIENT ALGORITHM!!!!!
+		// but cause I suck, I am going to implement a lame algorithm for now.
+	Matrix* Matrix::mult ( Matrix* mat ) {
 
-// avg
-float Matrix::avg () {
+		if ( mchmul( mat ) ) { throw 4; return this; }
 
-	float avg = 0;
+		Matrix* ret = new Matrix( rows, mat->columns, rows * mat->columns );
+		float temp = 0;
+		
+		
+		for ( int i = 0; i < rows; i++ ) {
+			for ( int j = 0; j < mat->columns; j++ ) {
 
-	for ( long i = 0L; i < size; i++ ) 
-		avg += data[ i ];
+				for ( int k = 0; k < columns; k++ )
+					temp += data[ i * columns + k ] * mat->data[ j + k * mat->columns ];
 
-	return avg / ( float )size;
+				ret->data[ i * mat->columns + j ] = temp;
+				temp = 0;
 
-}
-
-// mult ( Matrix* )
-	// TODO: IMPLEMENT A MORE EFFICIENT ALGORITHM!!!!!
-	// but cause I suck, I am going to implement a lame algorithm for now.
-Matrix* Matrix::mult ( Matrix* mat ) {
-
-	if ( mchmul( mat ) ) { throw 4; return this; }
-
-	Matrix* ret = new Matrix( rows, mat->columns, rows * mat->columns );
-	float temp = 0;
-	
-	
-	for ( int i = 0; i < rows; i++ ) {
-		for ( int j = 0; j < mat->columns; j++ ) {
-
-			for ( int k = 0; k < columns; k++ )
-				temp += data[ i * columns + k ] * mat->data[ j + k * mat->columns ];
-
-			ret->data[ i * mat->columns + j ] = temp;
-			temp = 0;
-
+			}
 		}
+
+		return ret;
+
 	}
 
-	return ret;
+	// todo: dot and cross, if needed
 
-}
+	// trans
+		// TODO: also make more efficient, if I can...
+	Matrix* Matrix::trans () {
 
-// todo: dot and cross, if needed
+		Matrix* ret = new Matrix( columns, rows, size );
 
-// trans
-	// TODO: also make more efficient, if I can...
-Matrix* Matrix::trans () {
+		for ( int i = 0; i < rows; i++ )
+			for ( int j = 0; j < columns; j++ )
+				ret->data[ j * rows + i ] = data[ i * columns + j ];
 
-	Matrix* ret = new Matrix( columns, rows, size );
+		return ret;
+		
+	}
 
-	for ( int i = 0; i < rows; i++ )
-		for ( int j = 0; j < columns; j++ )
-			ret->data[ j * rows + i ] = data[ i * columns + j ];
+	// apply ( float* ( float ) )
+	Matrix* Matrix::apply ( float (*func)( float num ) ) {
 
-	return ret;
-	
-}
+		for ( long i = 0L; i < size; i++ ) 
+			data[ i ] = func( data[ i ] );
 
-// apply ( float* ( float ) )
-Matrix* Matrix::apply ( float (*func)( float num ) ) {
+		return this;
 
-	for ( long i = 0L; i < size; i++ ) 
-		data[ i ] = func( data[ i ] );
-
-	return this;
+	}
 
 }

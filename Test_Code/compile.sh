@@ -1,1 +1,1 @@
-g++ -Wall -o test -llearnee Main.cpp
+g++ -Wall -o test Main.cpp -llearnee

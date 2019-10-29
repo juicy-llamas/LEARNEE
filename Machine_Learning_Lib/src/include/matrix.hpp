@@ -1,6 +1,8 @@
 #ifndef __MATRIX__
 #define __MATRIX__
 
+#include "std_include.hpp"
+
 namespace Learnee {
 
 	/* 

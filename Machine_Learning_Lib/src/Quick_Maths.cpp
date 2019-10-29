@@ -1,17 +1,19 @@
 // Math Funcs
 
-#include "include/Machine_Learning.hpp"
+#include "include/quick_maths.hpp"
 
-using namespace Learnee;
+namespace Learnee {
 
-float sigmoid ( float a ) {
+	float sigmoid ( float a ) {
 
-	return 1 / ( 1 + exp( -a ) );
+		return 1 / ( 1 + exp( -a ) );
 
-}
+	}
 
-float ReLU ( float a ) {
+	float ReLU ( float a ) {
 
-	return a > 0 ? a : 0;
+		return a > 0 ? a : 0;
+
+	}
 
 }

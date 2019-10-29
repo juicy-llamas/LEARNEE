@@ -5,17 +5,17 @@ BINARY = liblearnee.so
 default: install
 
 build/Matrix.o:
-	$(CXX) -Wall -fPIC -o build/Matrix.o -c src/Matrix_Not_Vectorized.cpp
+	$(CXX) -Wall -Werror -fPIC -o build/Matrix.o -c src/Matrix_Not_Vectorized.cpp
 
 build/Quick_Maths.o:
-	$(CXX) -Wall -fPIC -o build/Quick_Maths.o -c src/Quick_Maths.cpp
+	$(CXX) -Wall -Werror -fPIC -o build/Quick_Maths.o -c src/Quick_Maths.cpp
 
 link: $(OBJ)
-	$(CXX) -shared -o bin/$(BINARY) $(OBJ)
+	$(CXX) -Wall -Werror -shared -fPIC -o bin/$(BINARY) $(OBJ)
 
 install: link
-	cp bin/$(BINARY) /usr/lib/$(BINARY)
-	mkdir /usr/include/learnee
+	cp bin/$(BINARY) /usr/lib
+	mkdir -p /usr/include/learnee
 	cp src/include/* /usr/include/learnee
 	ldconfig
 
